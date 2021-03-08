@@ -28,6 +28,7 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <glob.h>
+#include <stdlib.h>
 
 #import "base/ZPYAppDelegate.h"
 #import "base/ZPYMenuHandler.h"
@@ -395,14 +396,14 @@ DragSource* g_dragSource = nil;
     
     // glob the executable path
     // (e.g., '~/.gem/ruby/*/bin/sass' will be resolved to something like '/Users/christen/.gem/ruby/2.0.0/bin/sass')
-    glob_t g;
-    if (glob([executablePath UTF8String], GLOB_TILDE, NULL, &g) == 0 && g.gl_matchc > 0)
-        executablePath = [NSString stringWithUTF8String: g.gl_pathv[0]];
-    globfree(&g);
+    glob_t* g = (glob_t*)alloca(sizeof(glob_t));
+    if (glob([executablePath UTF8String], GLOB_TILDE, NULL, g) == 0 && g->gl_matchc > 0)
+        executablePath = [NSString stringWithUTF8String: g->gl_pathv[0]];
+    globfree(g);
 
-    if (glob([cwd UTF8String], GLOB_TILDE, NULL, &g) == 0 && g.gl_matchc > 0)
-        cwd = [NSString stringWithUTF8String: g.gl_pathv[0]];
-    globfree(&g);
+    if (glob([cwd UTF8String], GLOB_TILDE, NULL, g) == 0 && g->gl_matchc > 0)
+        cwd = [NSString stringWithUTF8String: g->gl_pathv[0]];
+    globfree(g);
 
     // configure the task
     _task.launchPath = executablePath;
@@ -872,7 +873,7 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
                 else if ([commandId isEqualToString: @MENUCOMMAND_CHECK_UPDATE])
                 {
                     menuItem.action = @selector(checkForUpdates:);
-                    menuItem.target = ((ZPYAppDelegate*) [[NSApplication sharedApplication] delegate]).updater;
+//                    menuItem.target = ((ZPYAppDelegate*) [[NSApplication sharedApplication] delegate]).updater;
                 }
 #endif
                 else

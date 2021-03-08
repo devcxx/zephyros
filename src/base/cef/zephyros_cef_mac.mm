@@ -116,6 +116,19 @@ int RunApplication(int argc, char* argv[])
     // set the user agent
     CefString(&settings.user_agent).FromASCII(Zephyros::App::GetUserAgent().c_str());
 
+    // Set the sub-process path
+//    char* c_cwd = getcwd(NULL, 0);
+//    std::string cwd(c_cwd);
+//    free(c_cwd);
+//    std::string cef_dir_path(cwd);
+//
+//    std::string browser_subprocess_path(cef_dir_path);
+//    browser_subprocess_path += "appletweb";
+//    CefString(&settings.browser_subprocess_path).FromString(browser_subprocess_path);
+    
+    settings.single_process = 1;
+    settings.no_sandbox = 1;
+    
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
     

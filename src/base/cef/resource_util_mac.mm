@@ -91,6 +91,11 @@ bool LoadBinaryResource(const char* resource_name, std::string& resource_data)
     return ReadFileToString(path.c_str(), resource_data);
 }
 
+CefRefPtr<CefStreamReader> GetBinaryFileReader(const TCHAR* szFile)
+{
+    return CefStreamReader::CreateForFile(szFile);
+}
+
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name)
 {
     std::string path;

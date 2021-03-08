@@ -33,7 +33,7 @@
 #import <Cocoa/Cocoa.h>
 
 #ifndef APPSTORE
-#import <Sparkle/Sparkle.h>
+//#import <Sparkle/Sparkle.h>
 #endif
 
 #import "base/app.h"
@@ -61,7 +61,7 @@
 @property (retain) IBOutlet NSWindow *window;
 
 #ifndef APPSTORE
-@property (retain) SUUpdater *updater;
+//@property (retain) SUUpdater *updater;
 #endif
 
 @property ZPYTouchBarHandler *touchBarHandler;

@@ -527,8 +527,10 @@ void LicenseManagerImpl::FireLicenseChanged()
     args->SetDictionary(0, info);
 
     ClientExtensionHandlerPtr extensionHandler = Zephyros::GetNativeExtensions()->GetClientExtensionHandler();
+#ifdef USE_CEF
     if (extensionHandler.get() != NULL)
         Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onLicenseChanged"), args);
+#endif
 }
 
 #endif // !APPSTORE

@@ -56,8 +56,9 @@
 
 #define SET_DEFAULT(stringId, str) if (g_mapStrings.find(stringId) == g_mapStrings.end()) Zephyros::SetString(stringId, str)
 
+#ifdef USE_CEF
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
-
+#endif
 
 namespace Zephyros {
 
@@ -393,12 +394,16 @@ void ActivateWindow()
 
 void AttachDevTools()
 {
+#ifdef USE_CEF
     g_handler->ShowDevTools(App::GetBrowser(), CefPoint());
+#endif
 }
 
 void DettachDevTools()
 {
+#ifdef USE_CEF
     g_handler->CloseDevTools(App::GetBrowser());
+#endif
 }
 
 
