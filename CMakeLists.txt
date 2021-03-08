@@ -365,17 +365,17 @@ if(OS_WINDOWS)
 #  set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /EHsc /W4 /WX /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" /wd\"4091\"")
   set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /EHsc /W4 /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" /wd\"4091\"")
 
-  # /MTd                  = Multithreaded debug runtime
+  # /MDd                  = Multithreaded debug runtime
   # /Od                   = Disable optimizations
   # /RTC1                 = Enable basic run-time checks
-  set(CEF_COMPILER_FLAGS_DEBUG    "/MTd /RTC1 /Od")
+  set(CEF_COMPILER_FLAGS_DEBUG    "/MDd /RTC1 /Od")
 
-  # /MT                   = Multithreaded release runtime
+  # /MD                   = Multithreaded release runtime
   # /O2                   = Optimize for maximum speed
   # /Ob2                  = Inline any suitable function
   # /GF                   = Enable string pooling
   # /D NDEBUG /D _NDEBUG  = Not a debug build
-  set(CEF_COMPILER_FLAGS_RELEASE  "/MT /O2 /Ob2 /GF /D NDEBUG /D _NDEBUG")
+  set(CEF_COMPILER_FLAGS_RELEASE  "/MD /O2 /Ob2 /GF /D NDEBUG /D _NDEBUG")
 
   # /DEBUG                = Generate debug information
   set(CEF_LINKER_FLAGS_DEBUG      "/DEBUG")

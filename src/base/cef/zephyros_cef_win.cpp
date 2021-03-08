@@ -108,7 +108,7 @@ extern TCHAR g_szLogFileName[MAX_PATH];
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int CreateMainWindow();
-void InstallCrashReporting();
+//void InstallCrashReporting();
 
 void SetUserAgentString(CefSettings& settings);
 bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning);
@@ -163,7 +163,7 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
     // open the log file for writing
     g_hndLogFile = Zephyros::App::OpenLogFile();
-    InstallCrashReporting();
+    //InstallCrashReporting();
 
     CefMainArgs main_args(hInstance);
     CefRefPtr<ClientApp> app(new ClientApp());
@@ -235,9 +235,9 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	OleUninitialize();
 
     // Uninitialize CrashRpt before exiting the main function
-    const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
-    if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
-        crUninstall();
+    //const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+    //if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+    //    crUninstall();
 
     if (hMutex != NULL)
         ReleaseMutex(hMutex);
@@ -371,12 +371,13 @@ int CreateMainWindow()
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = g_hInst;
-    wcex.hIcon = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
+
+    wcex.hIcon = info.szIcon ? (HICON)LoadImage(g_hInst, info.szIcon, IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR | LR_LOADFROMFILE) : NULL;
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
     wcex.lpszMenuName = info.nMenuID ? MAKEINTRESOURCE(info.nMenuID) : NULL;
     wcex.lpszClassName = szWindowClass;
-    wcex.hIconSm = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
+    wcex.hIconSm = info.szIcon ? (HICON)LoadImage(g_hInst, info.szIcon, IMAGE_ICON, GetSystemMetrics(SM_CYSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR | LR_LOADFROMFILE) : NULL;
     ::RegisterClassEx(&wcex);
 
     // create the main window
@@ -471,50 +472,50 @@ int CALLBACK CrashCallback(CR_CRASH_CALLBACK_INFO* pInfo)
     return CR_CB_DODEFAULT;
 }
 
-void InstallCrashReporting()
-{
-    const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
-    if (szCrashReportingURL == NULL || szCrashReportingURL[0] == TCHAR('\0'))
-        return;
-
-    // define CrashRpt configuration parameters
-    CR_INSTALL_INFO info;
-    memset(&info, 0, sizeof(CR_INSTALL_INFO));
-    info.cb = sizeof(CR_INSTALL_INFO);
-
-    info.pszAppName = Zephyros::GetAppName();
-    info.pszAppVersion = Zephyros::GetAppVersion();
-    info.pszUrl = szCrashReportingURL;
-    info.pszPrivacyPolicyURL = Zephyros::GetCrashReportingPrivacyPolicyURL();
-
-    // send report only over HTTP
-    info.uPriorities[CR_HTTP] = 1;
-    info.uPriorities[CR_SMTP] = CR_NEGATIVE_PRIORITY;
-    info.uPriorities[CR_SMAPI] = CR_NEGATIVE_PRIORITY;
-
-    // Install all available exception handlers and restart the app after a crash
-    info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_APP_RESTART | CR_INST_SEND_QUEUED_REPORTS;
-
-    // Install crash reporting
-    if (crInstall(&info) == 0)
-    {
-        Zephyros::App::Log(TEXT("Crash reporting installed successfully"));
-
-        // Set crash callback function
-        crSetCrashCallback(CrashCallback, NULL);
-
-        // Add our log file to the error report
-        crAddFile2(g_szLogFileName, NULL, TEXT("Log File"), CR_AF_MAKE_FILE_COPY);
-    }
-    else
-    {
-        // something went wrong. Get error message.
-        TCHAR szErrorMsg[512] = TEXT("");
-        crGetLastErrorMsg(szErrorMsg, 512);
-        Zephyros::App::Log(TEXT("Failed to install crash reporting:"));
-        Zephyros::App::Log(szErrorMsg);
-    }
-}
+//void InstallCrashReporting()
+//{
+//    const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+//    if (szCrashReportingURL == NULL || szCrashReportingURL[0] == TCHAR('\0'))
+//        return;
+//
+//    // define CrashRpt configuration parameters
+//    CR_INSTALL_INFO info;
+//    memset(&info, 0, sizeof(CR_INSTALL_INFO));
+//    info.cb = sizeof(CR_INSTALL_INFO);
+//
+//    info.pszAppName = Zephyros::GetAppName();
+//    info.pszAppVersion = Zephyros::GetAppVersion();
+//    info.pszUrl = szCrashReportingURL;
+//    info.pszPrivacyPolicyURL = Zephyros::GetCrashReportingPrivacyPolicyURL();
+//
+//    // send report only over HTTP
+//    info.uPriorities[CR_HTTP] = 1;
+//    info.uPriorities[CR_SMTP] = CR_NEGATIVE_PRIORITY;
+//    info.uPriorities[CR_SMAPI] = CR_NEGATIVE_PRIORITY;
+//
+//    // Install all available exception handlers and restart the app after a crash
+//    info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_APP_RESTART | CR_INST_SEND_QUEUED_REPORTS;
+//
+//    // Install crash reporting
+//    if (crInstall(&info) == 0)
+//    {
+//        Zephyros::App::Log(TEXT("Crash reporting installed successfully"));
+//
+//        // Set crash callback function
+//        crSetCrashCallback(CrashCallback, NULL);
+//
+//        // Add our log file to the error report
+//        crAddFile2(g_szLogFileName, NULL, TEXT("Log File"), CR_AF_MAKE_FILE_COPY);
+//    }
+//    else
+//    {
+//        // something went wrong. Get error message.
+//        TCHAR szErrorMsg[512] = TEXT("");
+//        crGetLastErrorMsg(szErrorMsg, 512);
+//        Zephyros::App::Log(TEXT("Failed to install crash reporting:"));
+//        Zephyros::App::Log(szErrorMsg);
+//    }
+//}
 
 void SetUserAgentString(CefSettings& settings)
 {

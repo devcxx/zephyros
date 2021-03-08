@@ -446,7 +446,7 @@ protected:
 
         // paint the application icon
         if (m_hIcon == NULL)
-            m_hIcon = (HICON) LoadImage(g_hInst, MAKEINTRESOURCE(Zephyros::GetWindowsInfo().nIconID), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
+            m_hIcon = (HICON) LoadImage(g_hInst, Zephyros::GetWindowsInfo().szIcon, IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
         if (m_hIcon != NULL)
             DrawIconEx(hDC, 16, 10, m_hIcon, 128, 128, 0, NULL, DI_NORMAL);
 
@@ -594,7 +594,7 @@ protected:
 
         // paint the application icon
         if (m_hIcon == NULL)
-            m_hIcon = (HICON) LoadImage(g_hInst, MAKEINTRESOURCE(Zephyros::GetWindowsInfo().nIconID), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
+            m_hIcon = (HICON) LoadImage(g_hInst, Zephyros::GetWindowsInfo().szIcon, IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
         if (m_hIcon != NULL)
             DrawIconEx(hDC, 16, 10, m_hIcon, 128, 128, 0, NULL, DI_NORMAL);
 

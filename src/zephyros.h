@@ -137,6 +137,7 @@ typedef struct
     int nIconID;
     int nMenuID;
     int nAccelID;
+    TCHAR* szIcon;
 } WindowsInfo;
 
 typedef struct
@@ -253,10 +254,27 @@ void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID);
 Size GetDefaultWindowSize();
 void SetDefaultWindowSize(int nWidth, int nHeight);
 
+CefWindowHandle GetWindowHandle();
+void ActivateWindow();
+bool IsAttachedDevTools();
+void AttachDevTools();
+void DettachDevTools();
+
+// ä¯ÀÀÆ÷Ïà¹Ø
+String GetURL();
+void LoadURL(String url);
+void Reload();
+void GoBack();
+void GoForward();
+void Zoom(double percent);
+void Print();
+
 WindowsInfo GetWindowsInfo();
 void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID = 0, int nAccelID = 0);
 OSXInfo GetOSXInfo();
 void SetOSXInfo(const TCHAR* szMainNibName);
+
+void SetWindowIcon(const TCHAR* szPath);
 
 #ifndef NO_CRASHRPT
 const TCHAR* GetCrashReportingURL();

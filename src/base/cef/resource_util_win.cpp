@@ -88,3 +88,27 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* szResourceName)
     NOTREACHED();
     return NULL;
 }
+
+CefRefPtr<CefStreamReader> GetBinaryFileReader(const TCHAR* szFile)
+{
+    DWORD dwSize;
+    LPBYTE pBytes;
+
+    HANDLE hFile = ::CreateFile(szFile, GENERIC_READ,
+        0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE)
+        return NULL;
+
+    dwSize = ::GetFileSize(hFile, NULL);
+    pBytes = (LPBYTE)malloc(dwSize);
+    memset(pBytes, 0, dwSize);
+    DWORD readSize = 0;
+    ::ReadFile(hFile, pBytes, dwSize, &readSize, NULL);
+    ::CloseHandle(hFile);
+
+    return CefStreamReader::CreateForHandler(new CefByteReadHandler(pBytes, dwSize, NULL));
+
+    // the resource should be found.
+    NOTREACHED();
+    return NULL;
+}

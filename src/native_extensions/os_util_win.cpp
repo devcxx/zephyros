@@ -689,8 +689,8 @@ void DisplayNotification(String title, String details)
         ZeroMemory(g_pnfiNotifyIcon, sizeof(NOTIFYICONDATA));
 
         int nIconID = Zephyros::GetWindowsInfo().nIconID;
-        g_hIconSmall = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR));
-        g_hIconLarge = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR));
+        g_hIconSmall = static_cast<HICON>(LoadImage(g_hInst, Zephyros::GetWindowsInfo().szIcon, IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR | LR_LOADFROMFILE));
+        g_hIconLarge = static_cast<HICON>(LoadImage(g_hInst, Zephyros::GetWindowsInfo().szIcon, IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR | LR_LOADFROMFILE));
 
         g_pnfiNotifyIcon->cbSize = sizeof(NOTIFYICONDATA);
         g_pnfiNotifyIcon->hWnd = App::GetMainHwnd();

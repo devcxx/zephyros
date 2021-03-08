@@ -213,9 +213,9 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
 DWORD WINAPI WatchDirectory(LPVOID param)
 {
     // install exception handlers for this thread
-    const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
-    if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
-        crInstallToCurrentThread2(0);
+    //const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+    //if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+    //    crInstallToCurrentThread2(0);
 
     Zephyros::FileWatcher* pWatcher = (Zephyros::FileWatcher*) param;
 
@@ -315,7 +315,7 @@ DWORD WINAPI WatchDirectory(LPVOID param)
             delete[] buf;
 
             // unset exception handlers before exiting the thread
-            crUninstallFromCurrentThread();
+            //crUninstallFromCurrentThread();
 
             ExitThread(0);
             return 0;
@@ -327,7 +327,7 @@ DWORD WINAPI WatchDirectory(LPVOID param)
     }
 
     // unset exception handlers before exiting the thread
-    crUninstallFromCurrentThread();
+    //crUninstallFromCurrentThread();
 
     return 0;
 }

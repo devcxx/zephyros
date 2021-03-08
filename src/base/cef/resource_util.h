@@ -55,5 +55,6 @@ bool LoadBinaryResource(const TCHAR* resource_name, String& resource_data);
  */
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* resource_name);
 
+CefRefPtr<CefStreamReader> GetBinaryFileReader(const TCHAR* szFile);
 
 #endif // Zephyros_ResourceUtil_h

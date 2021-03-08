@@ -35,7 +35,7 @@
 #include "lib/cef/include/cef_request.h"
 #include "lib/cef/include/cef_scheme.h"
 #include "lib/cef/include/wrapper/cef_helpers.h"
-
+#include "lib/cef/include/cef_parser.h"
 #include "base/cef/local_scheme_handler.h"
 #include "base/cef/mime_types.h"
 
@@ -56,24 +56,43 @@ bool LocalSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr
     CEF_REQUIRE_IO_THREAD();
         
     String url = request->GetURL();
+    if (url.substr(0, 8) != TEXT("local://"))
+        return NULL;
+
     Error err;
     m_pData = NULL;
     
-    // remove query and hash parts
-    String::size_type posQuery = url.find(TEXT("?"));
-    String::size_type posHash = url.find(TEXT("#"));
-    String::size_type len = String::npos;
+    String path = url.substr(8);
+//     CefURLParts parts;
+//     CefParseURL(request->GetURL(), parts);
+//     String path = CefString(&parts.path);
+    path = CefURIDecode(path, true, cef_uri_unescape_rule_t::UU_SPACES);
+    path = CefURIDecode(
+        path, true,
+        cef_uri_unescape_rule_t::
+        UU_URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS);
 
-    if (posQuery != String::npos && posHash != String::npos)
-        len = std::min(posQuery, posHash);
-    else if (posQuery != String::npos)
-        len = posQuery;
-    else if (posHash != String::npos)
-        len = posHash;
-    
     // the URL is prefixed with "local://"
-    FileUtil::ReadFileBinary(DecodeURL(url.substr(8, len - 8)), &m_pData, m_size, err);
-    m_mimeType = GetMIMETypeForFilename(url);
+    FileUtil::ReadFileBinary(path, &m_pData, m_size, err);
+//     MessageBox(NULL, path.c_str(), TEXT("LocalSchemeHandler::ProcessRequest"), MB_OK);
+    m_mimeType = GetMIMETypeForFilename(path);
+
+    // remove query and hash parts
+//     String::size_type posQuery = url.find(TEXT("?"));
+//     String::size_type posHash = url.find(TEXT("#"));
+//     String::size_type len = String::npos;
+// 
+//     if (posQuery != String::npos && posHash != String::npos)
+//         len = std::min(posQuery, posHash);
+//     else if (posQuery != String::npos)
+//         len = posQuery;
+//     else if (posHash != String::npos)
+//         len = posHash;
+//     
+//     // the URL is prefixed with "local://"
+//     FileUtil::ReadFileBinary(DecodeURL(url.substr(8, len - 8)), &m_pData, m_size, err);
+//     MessageBox(NULL, DecodeURL(url.substr(8, len - 8)).c_str(), TEXT("LocalSchemeHandler::ProcessRequest"), MB_OK);
+//     m_mimeType = GetMIMETypeForFilename(url);
 
     // indicate the headers are available
     callback->Continue();

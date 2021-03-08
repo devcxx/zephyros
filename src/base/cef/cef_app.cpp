@@ -91,7 +91,7 @@ void GetSettings(CefSettings& settings)
         return;
 
     settings.no_sandbox = true;
-
+//     settings.single_process = true;
 #if defined(OS_WIN)
     settings.multi_threaded_message_loop = false;
 #endif

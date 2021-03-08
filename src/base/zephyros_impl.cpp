@@ -36,6 +36,7 @@
 #endif
 
 #include "base/types.h"
+#include "base/app.h"
 /// TODO: XXX remove
 #include "logging.h"
 ///
@@ -54,6 +55,8 @@
 
 
 #define SET_DEFAULT(stringId, str) if (g_mapStrings.find(stringId) == g_mapStrings.end()) Zephyros::SetString(stringId, str)
+
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 
 namespace Zephyros {
@@ -167,7 +170,7 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
     g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];
-    g_szAppURL = new TCHAR[_tcslen(szAppURL) + 8];
+    g_szAppURL = new TCHAR[_tcslen(szAppURL) + 10];
 
     _tcscpy(g_szAppName, szAppName);
     _tcscpy(g_szAppVersion, szAppVersion);
@@ -176,8 +179,16 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     _tcscpy(g_szAppURL, szAppURL);
 #endif
 #ifdef USE_CEF
-    _tcscpy(g_szAppURL, TEXT("app://"));
-    _tcscat(g_szAppURL, szAppURL);
+    String appURL(szAppURL);
+    if ((appURL.find(TEXT("http://")) != String::npos) || (appURL.find(TEXT("https://")) != String::npos)) {
+        _tcscpy(g_szAppURL, szAppURL);
+    }
+    else {
+        _tcscpy(g_szAppURL, TEXT("local://"));
+        _tcscat(g_szAppURL, szAppURL);
+    }
+    
+    
 #endif
 
     if (GetLicenseManager())
@@ -327,6 +338,76 @@ void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nA
     g_windowsInfo.nIconID = nIconID;
     g_windowsInfo.nMenuID = nMenuID;
     g_windowsInfo.nAccelID = nAccelID;
+}
+
+
+CefWindowHandle GetWindowHandle()
+{
+    return App::GetMainHwnd();
+}
+
+String GetURL()
+{
+    return App::GetBrowser()->GetMainFrame()->GetURL();
+}
+
+void LoadURL(String url)
+{
+    App::GetBrowser()->GetMainFrame()->LoadURL(url);
+}
+
+void Reload()
+{
+    return App::GetBrowser()->Reload();
+}
+
+void GoBack()
+{
+    App::GetBrowser()->GoBack();
+}
+void GoForward()
+{
+    App::GetBrowser()->GoForward();
+}
+
+void Zoom(double percent)
+{
+    double level = log(percent / 100.0) / log(1.2);
+    App::GetBrowser()->GetHost()->SetZoomLevel(level);
+}
+
+void Print()
+{
+    App::GetBrowser()->GetHost()->Print();
+}
+
+void ActivateWindow()
+{
+#ifdef OS_WIN
+    HWND hWnd = App::GetMainHwnd();
+    ShowWindow(hWnd, SW_SHOWNORMAL);
+    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    SetForegroundWindow(hWnd);
+#endif
+}
+
+void AttachDevTools()
+{
+    g_handler->ShowDevTools(App::GetBrowser(), CefPoint());
+}
+
+void DettachDevTools()
+{
+    g_handler->CloseDevTools(App::GetBrowser());
+}
+
+
+void SetWindowIcon(const TCHAR* szPath)
+{
+    if (g_windowsInfo.szIcon)
+        delete g_windowsInfo.szIcon;
+    g_windowsInfo.szIcon = new TCHAR[_tcslen(szPath) + 1];
+    _tcscpy(g_windowsInfo.szIcon, szPath);
 }
 
 OSXInfo GetOSXInfo()
