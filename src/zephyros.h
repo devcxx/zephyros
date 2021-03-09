@@ -256,7 +256,6 @@ void SetDefaultWindowSize(int nWidth, int nHeight);
 
 CefWindowHandle GetWindowHandle();
 void ActivateWindow();
-bool IsAttachedDevTools();
 void AttachDevTools();
 void DettachDevTools();
 

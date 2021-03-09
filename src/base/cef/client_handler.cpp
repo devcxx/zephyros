@@ -127,6 +127,16 @@ bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefStr
     return false;
 }
 
+void ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
+    const CefString& title)
+{
+    CEF_REQUIRE_UI_THREAD();
+#ifdef OS_WIN
+//     MessageBox(App::GetMainHwnd(), title.c_str(), TEXT("OnTitleChange"), MB_OK);
+    SetWindowText(App::GetMainHwnd(), title.c_str());
+#endif
+}
+
 bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDragData> dragData, CefDragHandler::DragOperationsMask mask)
 {
     CEF_REQUIRE_UI_THREAD();

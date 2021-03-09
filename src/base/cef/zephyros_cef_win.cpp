@@ -598,7 +598,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CefBrowserHost::CreateBrowser(info, g_handler.get(), Zephyros::GetAppURL(), settings, NULL);
 
             // show the window after 5 seconds, even if the content hasn't completed loading
-            SetTimer(hWnd, TIMER_SHOW_WINDW, 5000, NULL);
+//             SetTimer(hWnd, TIMER_SHOW_WINDW, 5000, NULL);
+            SetTimer(hWnd, TIMER_SHOW_WINDW, 500, NULL);
 
             return 0;
         }
