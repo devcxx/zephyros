@@ -249,10 +249,11 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
 {
-    pRectNormal->x = CW_USEDEFAULT;
-    pRectNormal->y = CW_USEDEFAULT;
     pRectNormal->w = Zephyros::GetDefaultWindowSize().nWidth;
     pRectNormal->h = Zephyros::GetDefaultWindowSize().nHeight;
+    pRectNormal->x = (GetSystemMetrics(SM_CXSCREEN) - pRectNormal->w) / 2;
+    pRectNormal->y = (GetSystemMetrics(SM_CYSCREEN) - pRectNormal->h) / 2;
+
     *pShowCmd = SW_SHOWDEFAULT;
 
     HKEY hKey;
@@ -281,7 +282,6 @@ void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
 
             delete[] buf;
         }
-
         RegCloseKey(hKey);
     }
 }
@@ -380,9 +380,11 @@ int CreateMainWindow()
     wcex.hIconSm = info.szIcon ? (HICON)LoadImage(g_hInst, info.szIcon, IMAGE_ICON, GetSystemMetrics(SM_CYSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR | LR_LOADFROMFILE) : NULL;
     ::RegisterClassEx(&wcex);
 
+//     MessageBox(NULL, TEXT("Attach to debugger..."), TEXT("Debug"), MB_OK);
     // create the main window
     Rect rectWindow;
     Zephyros::LoadWindowPlacement(&rectWindow, &g_nCmdShow);
+  
     Zephyros::AdjustWindowPlacementToMonitor(&rectWindow);
 
     HWND hWndMain = CreateWindow(

@@ -69,7 +69,7 @@ TCHAR* g_szAppURL = NULL;
 TCHAR* g_szUpdaterURL = NULL;
 TCHAR* g_szCrashReportingURL = NULL;
 TCHAR* g_szCrashReportingPrivacyPolicyURL = NULL;
-Size g_defaultWindowSize = { 800, 600 };
+Size g_defaultWindowSize = { 660, 640 };
 WindowsInfo g_windowsInfo = { 0 };
 OSXInfo g_osxInfo = { 0 };
 
