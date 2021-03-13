@@ -44,7 +44,7 @@
 #include "lib/cef/include/cef_frame.h"
 #include "lib/cef/include/wrapper/cef_closure_task.h"
 
-#include "lib/winsparkle/winsparkle.h"
+// #include "lib/winsparkle/winsparkle.h"
 #include "lib/CrashRpt/CrashRpt.h"
 
 #include "zephyros.h"
@@ -410,8 +410,8 @@ int CreateMainWindow()
     if (szUpdaterURL != NULL && szUpdaterURL[0] != TCHAR('\0'))
     {
         String strUpdaterURL(szUpdaterURL);
-        win_sparkle_set_appcast_url(std::string(strUpdaterURL.begin(), strUpdaterURL.end()).c_str());
-        win_sparkle_init();
+//         win_sparkle_set_appcast_url(std::string(strUpdaterURL.begin(), strUpdaterURL.end()).c_str());
+//         win_sparkle_init();
     }
 
     g_isMessageLoopRunning = true;
@@ -450,8 +450,8 @@ int CreateMainWindow()
     g_isMessageLoopRunning = false;
     g_handler->ReleaseCefObjects();
 
-    if (szUpdaterURL != NULL && szUpdaterURL[0] != TCHAR('\0'))
-        win_sparkle_cleanup();
+//     if (szUpdaterURL != NULL && szUpdaterURL[0] != TCHAR('\0'))
+//         win_sparkle_cleanup();
 
     Zephyros::OSUtil::CleanUp();
 
@@ -632,7 +632,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wmId)
             {
             case ID_FILE_CHECKFORUPDATES:
-                win_sparkle_check_update_with_ui();
+//                 win_sparkle_check_update_with_ui();
                 return 0;
 
             case ID_HELP_PURCHASELICENSE:
@@ -655,8 +655,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     const TCHAR* szCommand = Zephyros::GetMenuCommandForID(wmId);
                     if (szCommand)
                     {
-                        if (_tcscmp(szCommand, TEXT(MENUCOMMAND_CHECK_UPDATE)) == 0)
-                            win_sparkle_check_update_with_ui();
+                        if (_tcscmp(szCommand, TEXT(MENUCOMMAND_CHECK_UPDATE)) == 0) {
+//                             win_sparkle_check_update_with_ui();
+                        }
                         else if (_tcscmp(szCommand, TEXT(MENUCOMMAND_PURCHASE_LICENSE)) == 0)
                         {
                             if (Zephyros::GetLicenseManager())
