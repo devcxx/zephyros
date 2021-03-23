@@ -45,6 +45,11 @@ ClientApp::ClientApp()
     m_renderDelegates.insert(m_pAppExtensionHandler.get());
 }
 
+void ClientApp::AddRenderDelegate(CefRefPtr<RenderDelegate> delegate)
+{
+    m_renderDelegates.insert(delegate.get());
+}
+
 ClientApp::~ClientApp()
 {
     m_browserDelegates.clear();

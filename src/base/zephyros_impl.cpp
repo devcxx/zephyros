@@ -42,6 +42,7 @@
 ///
 #include "native_extensions/path.h"
 #include "util/string_util.h"
+#include "native_extensions/os_util.h"
 
 #ifdef USE_CEF
 #include "base/cef/client_handler.h"
@@ -347,6 +348,11 @@ CefWindowHandle GetWindowHandle()
     return App::GetMainHwnd();
 }
 
+void SetWindowCreatedCallback(const WindowCreatedCallback& callback)
+{
+    App::SetWindowCreatedCallback(callback);
+}
+
 String GetURL()
 {
     return App::GetBrowser()->GetMainFrame()->GetURL();
@@ -385,10 +391,8 @@ void Print()
 void ActivateWindow()
 {
 #ifdef OS_WIN
-    HWND hWnd = App::GetMainHwnd();
-    ShowWindow(hWnd, SW_SHOWNORMAL);
-    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-    SetForegroundWindow(hWnd);
+    OSUtil::BringWindowToFront();
+    OSUtil::RequestUserAttention();
 #endif
 }
 

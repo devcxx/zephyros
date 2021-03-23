@@ -106,7 +106,7 @@ public:
     };
 
     typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
-
+    void AddRenderDelegate(CefRefPtr<RenderDelegate> delegate);
 
     ClientApp();
     ~ClientApp();

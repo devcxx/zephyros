@@ -82,6 +82,8 @@ HINSTANCE g_hInst;
 // the global ClientHandler reference.
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
+extern WindowCreatedCallback g_windowCreatedCallback;;
+
 // is the message loop running?
 bool g_isMessageLoopRunning = false;
 
@@ -393,11 +395,18 @@ int CreateMainWindow()
         NULL, NULL, g_hInst, NULL
     );
 
+
+
+//     MessageBox(0, TEXT("Attach to debugger..."), TEXT("debug"), MB_OK);
+
     if (hWndMain == NULL)
     {
         Zephyros::App::ShowErrorMessage();
         return FALSE;
     }
+
+    if (g_windowCreatedCallback)
+        g_windowCreatedCallback(hWndMain);
 
     if (info.nAccelID)
     {
@@ -542,7 +551,7 @@ bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning)
 
         // create the window class name
         TCHAR szWindowClass[256];
-        _tcscpy(szWindowClass, TEXT("MainWnd_"));
+        _tcscpy(szWindowClass, TEXT("IMAppletWnd_"));
         _tcsncat(szWindowClass, Zephyros::GetAppName(), min(_tcslen(Zephyros::GetAppName()), 256 - 9));
 
         HWND hWnd = FindWindow(szWindowClass, NULL);

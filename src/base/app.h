@@ -72,6 +72,8 @@ CefRefPtr<CefCommandLine> GetCommandLine();
  */
 void GetSettings(CefSettings& settings);
 
+void SetWindowCreatedCallback(const WindowCreatedCallback& callback);
+
 #endif
 
 } // namespace App

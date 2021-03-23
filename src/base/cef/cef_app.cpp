@@ -43,7 +43,7 @@
 
 CefRefPtr<Zephyros::ClientHandler> g_handler;
 CefRefPtr<CefCommandLine> g_command_line;
-
+WindowCreatedCallback g_windowCreatedCallback;
 
 namespace Zephyros {
 namespace App {
@@ -113,6 +113,11 @@ void GetSettings(CefSettings& settings)
     settings.log_severity = LOGSEVERITY_WARNING;
     //settings.log_severity = LOGSEVERITY_VERBOSE;
 #endif
+}
+
+void SetWindowCreatedCallback(const WindowCreatedCallback& callback)
+{
+    g_windowCreatedCallback = callback;
 }
 
 } // namespace App

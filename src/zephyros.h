@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 #include <map>
-
+#include <functional>
 
 //////////////////////////////////////////////////////////////////////////
 // Constants
@@ -109,6 +109,7 @@ typedef std::string String;
 
 // TODO: is this still needed?
 //typedef CefWindowHandle WindowHandle;
+typedef std::function<void(void*)> WindowCreatedCallback;
 
 #endif
 
@@ -255,6 +256,7 @@ Size GetDefaultWindowSize();
 void SetDefaultWindowSize(int nWidth, int nHeight);
 
 CefWindowHandle GetWindowHandle();
+void SetWindowCreatedCallback(const WindowCreatedCallback& callback);
 void ActivateWindow();
 void AttachDevTools();
 void DettachDevTools();
