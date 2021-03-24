@@ -480,15 +480,16 @@ void AppExtensionHandler::OnBrowserCreated(CefRefPtr<ClientApp> app, CefRefPtr<C
 void AppExtensionHandler::OnContextReleased(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
 {
     // Remove any JavaScript callbacks registered for the context that has been released.
-    if (!m_mapCallbacks.empty())
-    {
-        for (std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.begin(); it != m_mapCallbacks.end(); ++it)
-            if (it->second->GetContext()->IsSame(context))
-            {
-                delete it->second;
-                m_mapCallbacks.erase(it);
-            }
-    }
+    // TODO: Crash in single_process mode
+//     if (!m_mapCallbacks.empty())
+//     {
+//         for (std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.begin(); it != m_mapCallbacks.end(); ++it)
+//             if (it->second->GetContext()->IsSame(context))
+//             {
+//                 delete it->second;
+//                 m_mapCallbacks.erase(it);
+//             }
+//     }
 }
 
 //
