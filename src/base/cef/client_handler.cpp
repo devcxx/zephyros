@@ -178,8 +178,8 @@ bool ClientHandler::OnPreKeyEvent(
             case VK_F11:
                 if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
                     TCHAR szMessage[1024] = { 0 };
-                    _stprintf(szMessage, TEXT("Command Line: %s\nChrome Version: %d.%d.%d.%d\nCEF Version: %s\nApplet Version: %s\nApplet URL: %s\nCompany Name: %s"),
-                        GetCommandLine(), CHROME_VERSION_MAJOR, CHROME_VERSION_MINOR, CHROME_VERSION_BUILD, CHROME_VERSION_BUILD, TEXT(CEF_VERSION), GetAppVersion(), GetAppURL(), GetCompanyName());
+                    _stprintf(szMessage, TEXT("Chrome Version: %d.%d.%d.%d\nCEF Version: %s\nUser Agent: %s\nCommand Line: %s\n\nApplet Version: %s\nApplet URL: %s\nCompany Name: %s"),
+                        CHROME_VERSION_MAJOR, CHROME_VERSION_MINOR, CHROME_VERSION_BUILD, CHROME_VERSION_BUILD, TEXT(CEF_VERSION), App::GetUserAgent().c_str(), GetCommandLine(), GetAppVersion(), GetAppURL(), GetCompanyName());
                     MessageBox(m_mainHwnd, szMessage, GetAppName(), MB_OK);
                 }
                 break;
