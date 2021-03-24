@@ -35,6 +35,7 @@
 #include "lib/cef/include/base/cef_bind.h"
 #include "lib/cef/include/cef_browser.h"
 #include "lib/cef/include/cef_frame.h"
+#include "lib/cef/include/cef_version.h"
 #include "lib/cef/include/cef_path_util.h"
 #include "lib/cef/include/cef_process_util.h"
 #include "lib/cef/include/cef_trace.h"
@@ -163,6 +164,33 @@ bool ClientHandler::OnPreKeyEvent(
     CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut)
 {
     CEF_REQUIRE_UI_THREAD();
+
+#ifdef OS_WIN
+    if (os_event) {
+        switch (os_event->message) {
+        case WM_KEYDOWN:
+            switch (os_event->wParam) {
+            case VK_F11:
+                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+                    TCHAR szMessage[1024] = { 0 };
+                    _stprintf(szMessage, TEXT("Command Line: %s\nChrome Version: %d.%d.%d.%d\nCEF Version: %s\nApplet Version: %s\nApplet URL: %s\nCompany Name: %s"),
+                        GetCommandLine(), CHROME_VERSION_MAJOR, CHROME_VERSION_MINOR, CHROME_VERSION_BUILD, CHROME_VERSION_BUILD, TEXT(CEF_VERSION), GetAppVersion(), GetAppURL(), GetCompanyName());
+                    MessageBox(m_mainHwnd, szMessage, GetAppName(), MB_OK);
+                }
+                break;
+            case VK_F12:
+                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+                    ShowDevTools(browser, CefPoint());
+                }
+            default:
+                break;
+            }
+        default:
+            break;
+        }
+    }
+#endif
+
     return false;
 }
 
