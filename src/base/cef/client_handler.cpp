@@ -170,6 +170,11 @@ bool ClientHandler::OnPreKeyEvent(
         switch (os_event->message) {
         case WM_KEYDOWN:
             switch (os_event->wParam) {
+            case VK_F5:
+                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+                    browser->Reload();
+                }
+                break;
             case VK_F11:
                 if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
                     TCHAR szMessage[1024] = { 0 };
@@ -182,6 +187,7 @@ bool ClientHandler::OnPreKeyEvent(
                 if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
                     ShowDevTools(browser, CefPoint());
                 }
+                break;
             default:
                 break;
             }
