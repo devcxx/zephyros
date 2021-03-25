@@ -76,7 +76,7 @@ LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
     }
 
     PathAddBackslash(szFilename);
-    PathAppend(szFilename, Zephyros::GetAppName());
+    PathAppend(szFilename, Zephyros::GetAppID());
     CreateDirectory(szFilename, NULL);
 
     PathAppend(szFilename, TEXT("\\"));
@@ -193,7 +193,7 @@ void LicenseData::Save()
     }
 
     PathAddBackslash(szFilename);
-    PathAppend(szFilename, Zephyros::GetAppName());
+    PathAppend(szFilename, Zephyros::GetAppID());
     CreateDirectory(szFilename, NULL);
 
     PathAppend(szFilename, TEXT("\\"));
@@ -755,7 +755,7 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
     if (!WinHttpCrackUrl(url.c_str(), 0, 0, &urlComponents))
         return ret;
 
-    HINTERNET hSession = WinHttpOpen(Zephyros::GetAppName(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    HINTERNET hSession = WinHttpOpen(Zephyros::GetAppID(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (hSession != NULL)
     {
         String strHostName(urlComponents.lpszHostName, urlComponents.dwHostNameLength);

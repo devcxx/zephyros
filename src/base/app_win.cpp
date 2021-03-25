@@ -57,7 +57,7 @@ String GetUserAgent()
 {
     String strOS = Zephyros::OSUtil::GetOSVersion();
     StringStream ssUserAgent;
-    ssUserAgent << Zephyros::GetAppName() << TEXT(" ") << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
+    ssUserAgent << Zephyros::GetAppID() << TEXT(" ") << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
 
     bool isLangAdded = false;
 
@@ -180,7 +180,14 @@ void Alert(String title, String msg, AlertStyle style)
 
 HANDLE OpenLogFile()
 {
-    SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_szLogFileName);
+//     SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_szLogFileName);
+    HMODULE hModule = ::GetModuleHandle(NULL);
+    TCHAR szPath[MAX_PATH] = { 0 };
+    GetModuleFileName(hModule, szPath, MAX_PATH);
+    PathRemoveFileSpec(szPath);
+    TCHAR szLog[MAX_PATH] = { 0 };
+    _stprintf(szLog, TEXT("%s/appletcache/Log"), szPath);
+    _tcscpy(g_szLogFileName, szLog);
 
     const TCHAR* szCompanyName = Zephyros::GetCompanyName();
     if (szCompanyName != NULL && szCompanyName[0] != TCHAR('\0'))
@@ -191,7 +198,7 @@ HANDLE OpenLogFile()
     }
 
     PathAddBackslash(g_szLogFileName);
-    PathAppend(g_szLogFileName, Zephyros::GetAppName());
+    PathAppend(g_szLogFileName, Zephyros::GetAppID());
     CreateDirectory(g_szLogFileName, NULL);
 
     PathAppend(g_szLogFileName, TEXT("\\debug.log"));

@@ -160,6 +160,13 @@ bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDrag
     return false;
 }
 
+#ifdef OS_WIN
+bool CtrlDown()
+{
+    return (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+}
+
+#endif
 bool ClientHandler::OnPreKeyEvent(
     CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut)
 {
@@ -170,22 +177,53 @@ bool ClientHandler::OnPreKeyEvent(
         switch (os_event->message) {
         case WM_KEYDOWN:
             switch (os_event->wParam) {
-            case VK_F5:
-                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+            case VK_F5: // Refresh
+                if (CtrlDown()) {
                     browser->Reload();
                 }
                 break;
-            case VK_F11:
-                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+            case VK_F11: // Open information dialog
+                if (CtrlDown()) {
                     TCHAR szMessage[1024] = { 0 };
                     _stprintf(szMessage, TEXT("Chrome Version: %d.%d.%d.%d\nCEF Version: %s\nUser Agent: %s\nCommand Line: %s\n\nApplet Version: %s\nApplet URL: %s\nCompany Name: %s"),
-                        CHROME_VERSION_MAJOR, CHROME_VERSION_MINOR, CHROME_VERSION_BUILD, CHROME_VERSION_BUILD, TEXT(CEF_VERSION), App::GetUserAgent().c_str(), GetCommandLine(), GetAppVersion(), GetAppURL(), GetCompanyName());
+                        CHROME_VERSION_MAJOR, CHROME_VERSION_MINOR, CHROME_VERSION_BUILD, CHROME_VERSION_BUILD, TEXT(CEF_VERSION),
+                        App::GetUserAgent().c_str(), GetCommandLine(), GetAppVersion(), GetAppURL(), GetCompanyName());
                     MessageBox(m_mainHwnd, szMessage, GetAppName(), MB_OK);
                 }
                 break;
-            case VK_F12:
-                if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
+            case VK_F12: // Show developer tools
+                if (CtrlDown()) {
                     ShowDevTools(browser, CefPoint());
+                }
+                break;
+            case VK_LEFT: // Go back
+                if (CtrlDown()) {
+                    browser->GoBack();
+                }
+                break;
+            case VK_RIGHT: // Go forward
+                if (CtrlDown()) {
+                    browser->GoForward();
+                }
+                break;
+            case VK_UP: // Zoom out page size
+                if (CtrlDown()) {
+                    browser->GetHost()->SetZoomLevel(browser->GetHost()->GetZoomLevel() + 0.2);
+                }
+                break;
+            case VK_DOWN: // Zoom in page size
+                if (CtrlDown()) {
+                    browser->GetHost()->SetZoomLevel(browser->GetHost()->GetZoomLevel() - 0.2);
+                }
+                break;
+            case 'P':
+                if (CtrlDown()) { // Print
+                    browser->GetHost()->Print();
+                }
+                break;
+            case '0':
+                if (CtrlDown()) { // Reset page zoom to zore
+                    browser->GetHost()->SetZoomLevel(0);
                 }
                 break;
             default:
@@ -198,6 +236,62 @@ bool ClientHandler::OnPreKeyEvent(
 #endif
 
     return false;
+}
+
+
+void ClientHandler::SetBrowserDpiSettings(CefRefPtr<CefBrowser> cefBrowser)
+{
+    // Setting zoom level immediately after browser was created
+    // won't work. We need to wait a moment before we can set it.
+    CEF_REQUIRE_UI_THREAD();
+#ifdef OS_WIN
+    double oldZoomLevel = cefBrowser->GetHost()->GetZoomLevel();
+    double newZoomLevel = 0.0;
+    
+    // Win7:
+    // text size Larger 150% => ppix/ppiy 144
+    // text size Medium 125% => ppix/ppiy 120
+    // text size Smaller 100% => ppix/ppiy 96
+    HWND cefHandle = cefBrowser->GetHost()->GetWindowHandle();
+    HDC hdc = GetDC(cefHandle);
+    int ppix = GetDeviceCaps(hdc, LOGPIXELSX);
+    int ppiy = GetDeviceCaps(hdc, LOGPIXELSY);
+    ReleaseDC(cefHandle, hdc);
+
+    if (ppix > 96) {
+        newZoomLevel = (ppix - 96) / 24;
+    }
+
+    if (oldZoomLevel != newZoomLevel) {
+        cefBrowser->GetHost()->SetZoomLevel(newZoomLevel);
+        if (cefBrowser->GetHost()->GetZoomLevel() != oldZoomLevel) {
+            // Succes.
+            LOG(INFO) << "DPI, ppix = " << ppix << ", ppiy = " << ppiy;
+            LOG(INFO) << "DPI, browser zoom level = "
+                     << cefBrowser->GetHost()->GetZoomLevel();
+        }
+    } else {
+        // This code block running can also be a result of executing
+        // SetZoomLevel(), as GetZoomLevel() didn't return the new
+        // value that was set. Documentation says that if SetZoomLevel
+        // is called on the UI thread, then GetZoomLevel should
+        // immediately return the same value that was set. Unfortunately
+        // this seems not to be true.
+        static bool already_logged = false;
+        if (!already_logged) {
+            already_logged = true;
+            // Success.
+            LOG(INFO) << "DPI, ppix = " << ppix << ", ppiy = " << ppiy;
+            LOG(INFO) << "DPI, browser zoom level = "
+                     << cefBrowser->GetHost()->GetZoomLevel();
+        }
+    }
+#endif
+    // We need to check zooming constantly, during loading of pages.
+    // If we set zooming to 2.0 for localhost/ and then it navigates
+    // to google.com, then the zomming is back at 0.0 and needs to
+    // be set again.
+    CefPostDelayedTask(TID_UI, base::Bind(&ClientHandler::SetBrowserDpiSettings, this, cefBrowser.get()), 50);
 }
 
 void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
@@ -223,6 +317,8 @@ void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
     }
 
     m_nBrowserCount++;
+
+//     SetBrowserDpiSettings(browser);
 }
 
 bool ClientHandler::DoClose(CefRefPtr<CefBrowser> browser)

@@ -91,7 +91,9 @@ void GetSettings(CefSettings& settings)
         return;
 
     settings.no_sandbox = true;
+#ifdef OS_MACOSX
     settings.single_process = true;
+#endif
 #if defined(OS_WIN)
     settings.multi_threaded_message_loop = false;
 #endif

@@ -64,6 +64,7 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 namespace Zephyros {
 
 TCHAR* g_szCompanyName = NULL;
+TCHAR* g_szAppID = NULL;
 TCHAR* g_szAppName = NULL;
 TCHAR* g_szAppVersion = NULL;
 TCHAR* g_szAppURL = NULL;
@@ -159,7 +160,7 @@ void InitDefaultStrings()
 
 }
 
-int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
+int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppID, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
 {
 #ifdef OS_LINUX
     XInitThreads();
@@ -170,10 +171,13 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
         fnxSetResources();
     
     size_t lenAppName = _tcslen(szAppName);
+    size_t lenAppID = _tcslen(szAppID);
+    g_szAppID = new TCHAR[lenAppID + 1];
     g_szAppName = new TCHAR[lenAppName + 1];
     g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];
     g_szAppURL = new TCHAR[_tcslen(szAppURL) + 10];
 
+    _tcscpy(g_szAppID, szAppID);
     _tcscpy(g_szAppName, szAppName);
     _tcscpy(g_szAppVersion, szAppVersion);
 
@@ -204,12 +208,12 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
 #endif
 
 #ifdef OS_WIN
-    // - set the registry key to "Software\<AppName>"
+    // - set the registry key to "Software\<AppID>"
     if (g_windowsInfo.szRegistryKey == NULL)
     {
-        g_windowsInfo.szRegistryKey = new TCHAR[9 + lenAppName + 1];
+        g_windowsInfo.szRegistryKey = new TCHAR[9 + lenAppID + 1];
         _tcscpy(g_windowsInfo.szRegistryKey, TEXT("Software\\"));
-        _tcscat(g_windowsInfo.szRegistryKey, g_szAppName);
+        _tcscat(g_windowsInfo.szRegistryKey, g_szAppID);
     }
 #endif
 
@@ -224,6 +228,9 @@ void Shutdown()
 {
     if (g_szCompanyName != NULL)
         delete[] g_szCompanyName;
+
+     if (g_szAppID != NULL)
+        delete[] g_szAppID;
 
     if (g_szAppName != NULL)
         delete[] g_szAppName;
@@ -271,6 +278,11 @@ void Shutdown()
 const TCHAR* GetAppName()
 {
     return g_szAppName;
+}
+
+const TCHAR* GetAppID()
+{
+    return g_szAppID;
 }
 
 const TCHAR* GetAppVersion()

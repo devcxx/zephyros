@@ -254,7 +254,7 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
     username = TEXT("");
     password = TEXT("");
 
-    HINTERNET hSession = WinHttpOpen(Zephyros::GetAppName(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    HINTERNET hSession = WinHttpOpen(Zephyros::GetAppID(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (hSession != NULL)
     {
         WINHTTP_PROXY_INFO proxyInfo = { 0 };

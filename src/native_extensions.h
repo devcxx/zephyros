@@ -349,6 +349,8 @@ public:
     void ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at);
     void CloseDevTools(CefRefPtr<CefBrowser> browser);
 
+    void SetBrowserDpiSettings(CefRefPtr<CefBrowser> cefBrowser);
+
 private:
     // START THREAD SAFE MEMBERS
     // The following members are thread-safe because they're initialized during

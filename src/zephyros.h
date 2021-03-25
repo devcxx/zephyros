@@ -237,10 +237,11 @@ void RemoveDemoMenuItems();
 
 namespace Zephyros {
 
-int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL);
+int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppID, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL);
 int RunApplication(MAIN_ARGS);
 void Shutdown();
 
+const TCHAR* GetAppID();
 const TCHAR* GetAppName();
 const TCHAR* GetAppVersion();
 const TCHAR* GetAppURL();

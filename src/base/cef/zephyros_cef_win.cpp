@@ -141,13 +141,13 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
     // determine if another instance of the application is already running
     bool bOtherInstanceRunning = false;
-    HANDLE hMutex = CreateMutex(NULL, FALSE, Zephyros::GetAppName());
+    HANDLE hMutex = CreateMutex(NULL, FALSE, Zephyros::GetAppID());
     DWORD dwErr = GetLastError();
     if (dwErr == ERROR_ALREADY_EXISTS)
         bOtherInstanceRunning = true;
     else if (dwErr == ERROR_ACCESS_DENIED)
     {
-        hMutex = OpenMutex(SYNCHRONIZE, FALSE, Zephyros::GetAppName());
+        hMutex = OpenMutex(SYNCHRONIZE, FALSE, Zephyros::GetAppID());
         if (hMutex != NULL)
             bOtherInstanceRunning = true;
     }
@@ -186,6 +186,25 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
     // populate the settings based on command line arguments
     CefSettings settings;
+
+    HMODULE hModule = ::GetModuleHandle(NULL);
+    TCHAR szPath[MAX_PATH] = { 0 };
+    GetModuleFileName(hModule, szPath, MAX_PATH);
+    PathRemoveFileSpec(szPath);
+    TCHAR szCachePath[MAX_PATH] = { 0 };
+    TCHAR szUserData[MAX_PATH] = { 0 };
+    TCHAR szLogFile[MAX_PATH] = { 0 };
+    _stprintf(szCachePath, TEXT("%s/appletcache/Cache/%s"), szPath, GetAppID());
+    _stprintf(szUserData, TEXT("%s/appletcache/UserData/%s"), szPath, GetAppID());
+    _stprintf(szLogFile, TEXT("%s/appletcache/Log/%s/cef.log"), szPath, GetAppID());
+
+    String cache_path(szCachePath);
+    String user_data_path(szUserData);
+    String log_file(szLogFile);
+    CefString(&settings.cache_path).FromWString(cache_path);
+    CefString(&settings.user_data_path).FromWString(user_data_path);
+    CefString(&settings.log_file).FromWString(szLogFile);
+
     Zephyros::App::GetSettings(settings);
 
     // set the user agent
@@ -363,7 +382,7 @@ int CreateMainWindow()
     // create the window class name
     TCHAR szWindowClass[256];
     _tcscpy(szWindowClass, TEXT("MainWnd_"));
-    _tcsncat(szWindowClass, Zephyros::GetAppName(), min(_tcslen(Zephyros::GetAppName()), 256 - 9));
+    _tcsncat(szWindowClass, Zephyros::GetAppID(), min(_tcslen(Zephyros::GetAppID()), 256 - 9));
 
     // register the window class of the main window
     WNDCLASSEX wcex;
@@ -552,7 +571,7 @@ bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning)
         // create the window class name
         TCHAR szWindowClass[256];
         _tcscpy(szWindowClass, TEXT("IMAppletWnd_"));
-        _tcsncat(szWindowClass, Zephyros::GetAppName(), min(_tcslen(Zephyros::GetAppName()), 256 - 9));
+        _tcsncat(szWindowClass, Zephyros::GetAppID(), min(_tcslen(Zephyros::GetAppID()), 256 - 9));
 
         HWND hWnd = FindWindow(szWindowClass, NULL);
         if (!hWnd)
